@@ -1,0 +1,477 @@
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Téléchargeur GitHub - Upload de fichiers ZIP vers GitHub</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+    tailwind.config = {
+        theme: {
+            extend: {
+                colors: {
+                    'github-blue': '#0969da',
+                    'github-green': '#1f883d',
+                    'github-gray': '#656d76'
+                },
+                fontFamily: {
+                    'sans': ['Inter', 'system-ui', 'sans-serif']
+                }
+            }
+        }
+    };
+    </script>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+</head>
+<body class="bg-gray-50 min-h-screen font-sans">
+    <!-- @COMPONENT: Header -->
+    <header class="bg-white shadow-sm border-b border-gray-200">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="flex justify-between items-center h-16">
+                <div class="flex items-center">
+                    <i class="fab fa-github text-2xl text-gray-900 mr-3"></i>
+                    <h1 class="text-xl font-semibold text-gray-900">Téléchargeur GitHub</h1>
+                </div>
+                <div class="flex items-center space-x-4">
+                    <span class="text-sm text-gray-600">Interface sécurisée</span>
+                    <i class="fas fa-shield-alt text-github-green"></i>
+                </div>
+            </div>
+        </div>
+    </header>
+    <!-- @END_COMPONENT: Header -->
+
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+        <!-- @COMPONENT: IntroCard -->
+        <div class="bg-white rounded-lg shadow-sm border border-gray-200 p-6 mb-8">
+            <div class="flex items-start">
+                <div class="flex-shrink-0">
+                    <i class="fas fa-info-circle text-blue-500 text-xl mt-1"></i>
+                </div>
+                <div class="ml-4">
+                    <h2 class="text-lg font-medium text-gray-900 mb-2">Upload de fichiers ZIP vers GitHub</h2>
+                    <p class="text-gray-600 mb-4">Cette application vous permet d'extraire et d'organiser automatiquement le contenu d'un fichier ZIP vers un dépôt GitHub en préservant la structure des dossiers.</p>
+                    <div class="flex items-center text-sm text-gray-500">
+                        <i class="fas fa-lock mr-2"></i>
+                        <span>Vos tokens ne sont jamais stockés - Sécurité garantie</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <!-- @END_COMPONENT: IntroCard -->
+
+        <div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
+            <!-- Left Column - Main Form -->
+            <div class="lg:col-span-2">
+                <!-- @COMPONENT: GitHubTokenSection -->
+                <div class="bg-white rounded-lg shadow-sm border border-gray-200 p-6 mb-6">
+                    <div class="flex items-center mb-4">
+                        <i class="fas fa-key text-github-blue mr-3"></i>
+                        <h3 class="text-lg font-medium text-gray-900">1. Configuration GitHub</h3>
+                        <span class="ml-auto bg-yellow-100 text-yellow-800 text-xs font-medium px-2.5 py-0.5 rounded-full">Requis</span>
+                    </div>
+                    
+                    <div class="space-y-4">
+                        <div>
+                            <label for="github-token" class="block text-sm font-medium text-gray-700 mb-2">
+                                Token d'API GitHub
+                                <span class="text-red-500">*</span>
+                            </label>
+                            <div class="relative">
+                                <input 
+                                    type="password" 
+                                    id="github-token" 
+                                    placeholder="ghp_xxxxxxxxxxxxxxxxxxxx"
+                                    class="block w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-colors pr-12"
+                                    data-implementation="Secure token input with validation"
+                                >
+                                <button type="button" class="absolute inset-y-0 right-0 pr-3 flex items-center" onclick="togglePasswordVisibility('github-token')">
+                                    <i class="fas fa-eye text-gray-400 hover:text-gray-600"></i>
+                                </button>
+                            </div>
+                            <p class="text-xs text-gray-500 mt-1">
+                                <i class="fas fa-external-link-alt mr-1"></i>
+                                <a href="#" class="text-blue-600 hover:text-blue-800">Créer un token GitHub</a> 
+                                avec les permissions 'repo' et 'contents'
+                            </p>
+                        </div>
+
+                        <div>
+                            <label for="repo-url" class="block text-sm font-medium text-gray-700 mb-2">
+                                URL du dépôt GitHub
+                                <span class="text-red-500">*</span>
+                            </label>
+                            <input 
+                                type="url" 
+                                id="repo-url" 
+                                placeholder="https://github.com/utilisateur/nom-depot"
+                                class="block w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-colors"
+                                data-bind="repository.url"
+                            >
+                        </div>
+
+                        <button 
+                            type="button" 
+                            class="w-full bg-github-blue text-white py-3 px-4 rounded-lg font-medium hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+                            data-event="click:validateGitHubToken"
+                        >
+                            <i class="fas fa-check-circle mr-2"></i>
+                            Valider la connexion GitHub
+                        </button>
+                    </div>
+                </div>
+                <!-- @END_COMPONENT: GitHubTokenSection -->
+
+                <!-- @COMPONENT: FileUploadSection -->
+                <div class="bg-white rounded-lg shadow-sm border border-gray-200 p-6 mb-6">
+                    <div class="flex items-center mb-4">
+                        <i class="fas fa-file-archive text-purple-600 mr-3"></i>
+                        <h3 class="text-lg font-medium text-gray-900">2. Sélection du fichier ZIP</h3>
+                    </div>
+
+                    <!-- File Drop Zone -->
+                    <div class="border-2 border-dashed border-gray-300 rounded-lg p-8 text-center hover:border-gray-400 transition-colors cursor-pointer" 
+                         id="drop-zone"
+                         data-implementation="Drag and drop file upload with progress">
+                        <div class="space-y-4">
+                            <div class="mx-auto h-16 w-16 text-gray-400">
+                                <i class="fas fa-cloud-upload-alt text-4xl"></i>
+                            </div>
+                            <div>
+                                <p class="text-lg text-gray-600 font-medium">Glissez votre fichier ZIP ici</p>
+                                <p class="text-sm text-gray-500">ou cliquez pour sélectionner un fichier</p>
+                            </div>
+                            <div class="flex justify-center">
+                                <button type="button" class="bg-white border border-gray-300 text-gray-700 px-4 py-2 rounded-lg hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 transition-colors">
+                                    <i class="fas fa-folder-open mr-2"></i>
+                                    Choisir un fichier
+                                </button>
+                            </div>
+                            <p class="text-xs text-gray-400">Maximum 100MB • Formats acceptés: .zip</p>
+                        </div>
+                    </div>
+
+                    <!-- Selected File Display -->
+                    <div class="mt-4 hidden" id="selected-file" data-mock="true">
+                        <div class="flex items-center p-4 bg-gray-50 rounded-lg border border-gray-200">
+                            <i class="fas fa-file-archive text-purple-600 text-xl mr-3"></i>
+                            <div class="flex-1 min-w-0">
+                                <p class="text-sm font-medium text-gray-900 truncate" data-bind="file.name">project-files.zip</p>
+                                <p class="text-xs text-gray-500" data-bind="file.size">2.3 MB • Sélectionné il y a quelques secondes</p>
+                            </div>
+                            <button type="button" class="ml-4 text-gray-400 hover:text-gray-600">
+                                <i class="fas fa-times"></i>
+                            </button>
+                        </div>
+                    </div>
+                </div>
+                <!-- @END_COMPONENT: FileUploadSection -->
+
+                <!-- @COMPONENT: UploadOptionsSection -->
+                <div class="bg-white rounded-lg shadow-sm border border-gray-200 p-6 mb-6">
+                    <div class="flex items-center mb-4">
+                        <i class="fas fa-cogs text-gray-600 mr-3"></i>
+                        <h3 class="text-lg font-medium text-gray-900">3. Options d'upload</h3>
+                    </div>
+
+                    <div class="space-y-4">
+                        <div>
+                            <label for="target-branch" class="block text-sm font-medium text-gray-700 mb-2">
+                                Branche de destination
+                            </label>
+                            <input 
+                                type="text" 
+                                id="target-branch" 
+                                value="main"
+                                class="block w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-colors"
+                            >
+                        </div>
+
+                        <div>
+                            <label for="commit-message" class="block text-sm font-medium text-gray-700 mb-2">
+                                Message de commit
+                            </label>
+                            <input 
+                                type="text" 
+                                id="commit-message" 
+                                placeholder="Ajout de nouveaux fichiers via ZIP upload"
+                                class="block w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-colors"
+                            >
+                        </div>
+
+                        <div class="space-y-3">
+                            <div class="flex items-center">
+                                <input 
+                                    id="preserve-structure" 
+                                    type="checkbox" 
+                                    checked
+                                    class="h-4 w-4 text-blue-600 focus:ring-blue-500 border-gray-300 rounded"
+                                >
+                                <label for="preserve-structure" class="ml-2 text-sm text-gray-700">
+                                    Préserver la structure des dossiers
+                                </label>
+                            </div>
+                            <div class="flex items-center">
+                                <input 
+                                    id="overwrite-files" 
+                                    type="checkbox" 
+                                    class="h-4 w-4 text-blue-600 focus:ring-blue-500 border-gray-300 rounded"
+                                >
+                                <label for="overwrite-files" class="ml-2 text-sm text-gray-700">
+                                    Écraser les fichiers existants
+                                </label>
+                            </div>
+                            <div class="flex items-center">
+                                <input 
+                                    id="create-test-zip" 
+                                    type="checkbox" 
+                                    class="h-4 w-4 text-blue-600 focus:ring-blue-500 border-gray-300 rounded"
+                                >
+                                <label for="create-test-zip" class="ml-2 text-sm text-gray-700">
+                                    Créer un fichier ZIP de test pour validation
+                                </label>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <!-- @END_COMPONENT: UploadOptionsSection -->
+
+                <!-- @COMPONENT: UploadButton -->
+                <div class="bg-white rounded-lg shadow-sm border border-gray-200 p-6">
+                    <button 
+                        type="button" 
+                        class="w-full bg-github-green text-white py-4 px-6 rounded-lg font-medium hover:bg-green-700 focus:outline-none focus:ring-2 focus:ring-green-500 focus:ring-offset-2 transition-colors disabled:opacity-50 disabled:cursor-not-allowed text-lg"
+                        data-event="click:startUpload"
+                        disabled
+                    >
+                        <i class="fas fa-upload mr-3"></i>
+                        Commencer l'upload vers GitHub
+                    </button>
+                    <p class="text-xs text-gray-500 text-center mt-2">
+                        Vérifiez que tous les champs requis sont remplis avant de continuer
+                    </p>
+                </div>
+                <!-- @END_COMPONENT: UploadButton -->
+            </div>
+
+            <!-- Right Column - Status and Logs -->
+            <div class="lg:col-span-1">
+                <!-- @COMPONENT: StatusPanel -->
+                <div class="bg-white rounded-lg shadow-sm border border-gray-200 p-6 mb-6">
+                    <div class="flex items-center mb-4">
+                        <i class="fas fa-tasks text-indigo-600 mr-3"></i>
+                        <h3 class="text-lg font-medium text-gray-900">Statut</h3>
+                    </div>
+
+                    <!-- @STATE: uploadStatus = 'idle' | 'uploading' | 'success' | 'error' -->
+                    <div class="space-y-3">
+                        <div class="flex items-center justify-between p-3 bg-gray-50 rounded-lg">
+                            <span class="text-sm font-medium text-gray-700">Connexion GitHub</span>
+                            <span class="flex items-center text-xs text-gray-500">
+                                <i class="fas fa-circle text-gray-400 mr-1"></i>
+                                En attente
+                            </span>
+                        </div>
+                        <div class="flex items-center justify-between p-3 bg-gray-50 rounded-lg">
+                            <span class="text-sm font-medium text-gray-700">Fichier ZIP</span>
+                            <span class="flex items-center text-xs text-gray-500">
+                                <i class="fas fa-circle text-gray-400 mr-1"></i>
+                                Non sélectionné
+                            </span>
+                        </div>
+                        <div class="flex items-center justify-between p-3 bg-gray-50 rounded-lg">
+                            <span class="text-sm font-medium text-gray-700">Upload</span>
+                            <span class="flex items-center text-xs text-gray-500">
+                                <i class="fas fa-circle text-gray-400 mr-1"></i>
+                                Prêt
+                            </span>
+                        </div>
+                    </div>
+                </div>
+                <!-- @END_COMPONENT: StatusPanel -->
+
+                <!-- @COMPONENT: ProgressPanel -->
+                <div class="bg-white rounded-lg shadow-sm border border-gray-200 p-6 mb-6 hidden" id="progress-panel" data-mock="true">
+                    <div class="flex items-center mb-4">
+                        <i class="fas fa-progress-bar text-blue-600 mr-3"></i>
+                        <h3 class="text-lg font-medium text-gray-900">Progression</h3>
+                    </div>
+
+                    <div class="space-y-4">
+                        <div>
+                            <div class="flex justify-between text-sm text-gray-700 mb-1">
+                                <span>Extraction du ZIP</span>
+                                <span data-bind="progress.extraction">75%</span>
+                            </div>
+                            <div class="w-full bg-gray-200 rounded-full h-2">
+                                <div class="bg-blue-600 h-2 rounded-full" style="width: 75%"></div>
+                            </div>
+                        </div>
+
+                        <div class="text-sm text-gray-600">
+                            <p><span class="font-medium" data-bind="progress.currentFile">src/components/Button.tsx</span></p>
+                            <p class="text-xs mt-1" data-bind="progress.filesProcessed">12 / 45 fichiers traités</p>
+                        </div>
+                    </div>
+                </div>
+                <!-- @END_COMPONENT: ProgressPanel -->
+
+                <!-- @COMPONENT: LogsPanel -->
+                <div class="bg-white rounded-lg shadow-sm border border-gray-200 p-6">
+                    <div class="flex items-center justify-between mb-4">
+                        <div class="flex items-center">
+                            <i class="fas fa-terminal text-gray-600 mr-3"></i>
+                            <h3 class="text-lg font-medium text-gray-900">Logs d'opération</h3>
+                        </div>
+                        <button type="button" class="text-xs text-gray-500 hover:text-gray-700">
+                            <i class="fas fa-expand-alt mr-1"></i>
+                            Agrandir
+                        </button>
+                    </div>
+
+                    <div class="bg-gray-900 rounded-lg p-4 max-h-64 overflow-y-auto">
+                        <div class="space-y-2 text-sm font-mono">
+                            <!-- @MAP: logs.map(log => ( -->
+                            <div class="text-gray-400" data-mock="true">
+                                <span class="text-blue-400">[09:15:23]</span>
+                                <span class="text-green-400">[INFO]</span>
+                                Application initialisée
+                            </div>
+                            <div class="text-gray-400" data-mock="true">
+                                <span class="text-blue-400">[09:15:24]</span>
+                                <span class="text-green-400">[INFO]</span>
+                                En attente de configuration GitHub...
+                            </div>
+                            <!-- @END_MAP -->
+                        </div>
+                    </div>
+                    
+                    <div class="mt-3 flex justify-between items-center text-xs text-gray-500">
+                        <span>Logs en temps réel</span>
+                        <button type="button" class="hover:text-gray-700">
+                            <i class="fas fa-download mr-1"></i>
+                            Exporter
+                        </button>
+                    </div>
+                </div>
+                <!-- @END_COMPONENT: LogsPanel -->
+            </div>
+        </div>
+
+        <!-- @COMPONENT: TestZipSection -->
+        <div class="mt-8 bg-blue-50 rounded-lg border border-blue-200 p-6">
+            <div class="flex items-start">
+                <div class="flex-shrink-0">
+                    <i class="fas fa-lightbulb text-blue-600 text-xl mt-1"></i>
+                </div>
+                <div class="ml-4 flex-1">
+                    <h3 class="text-lg font-medium text-blue-900 mb-2">Créer un fichier ZIP de test</h3>
+                    <p class="text-blue-700 mb-4">Générez un fichier ZIP d'exemple pour tester le processus d'upload avant d'utiliser vos vrais fichiers.</p>
+                    <button 
+                        type="button" 
+                        class="bg-blue-600 text-white px-4 py-2 rounded-lg hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 transition-colors text-sm font-medium"
+                        data-event="click:createTestZip"
+                    >
+                        <i class="fas fa-plus mr-2"></i>
+                        Générer un ZIP de test
+                    </button>
+                </div>
+            </div>
+        </div>
+        <!-- @END_COMPONENT: TestZipSection -->
+    </div>
+
+    <!-- @COMPONENT: NotificationToast -->
+    <div class="fixed top-4 right-4 z-50 hidden" id="notification-toast" data-mock="true">
+        <div class="bg-white border border-gray-200 rounded-lg shadow-lg p-4 max-w-md">
+            <div class="flex items-start">
+                <div class="flex-shrink-0">
+                    <i class="fas fa-check-circle text-green-500 text-xl" data-bind="toast.icon"></i>
+                </div>
+                <div class="ml-3 flex-1">
+                    <p class="text-sm font-medium text-gray-900" data-bind="toast.title">Succès!</p>
+                    <p class="text-sm text-gray-600 mt-1" data-bind="toast.message">Token GitHub validé avec succès.</p>
+                </div>
+                <button type="button" class="ml-4 text-gray-400 hover:text-gray-600">
+                    <i class="fas fa-times"></i>
+                </button>
+            </div>
+        </div>
+    </div>
+    <!-- @END_COMPONENT: NotificationToast -->
+
+    <script>
+    // TODO: Implement business logic, API calls, and state management
+    (function() {
+        'use strict';
+        
+        // Password visibility toggle
+        window.togglePasswordVisibility = function(inputId) {
+            const input = document.getElementById(inputId);
+            const icon = input.nextElementSibling.querySelector('i');
+            
+            if (input.type === 'password') {
+                input.type = 'text';
+                icon.className = 'fas fa-eye-slash text-gray-400 hover:text-gray-600';
+            } else {
+                input.type = 'password';
+                icon.className = 'fas fa-eye text-gray-400 hover:text-gray-600';
+            }
+        };
+
+        // File drop zone handlers
+        const dropZone = document.getElementById('drop-zone');
+        const selectedFileDiv = document.getElementById('selected-file');
+
+        if (dropZone) {
+            dropZone.addEventListener('click', function() {
+                // TODO: Implement file picker
+                console.log('File picker should open');
+            });
+
+            dropZone.addEventListener('dragover', function(e) {
+                e.preventDefault();
+                this.classList.add('border-blue-500', 'bg-blue-50');
+            });
+
+            dropZone.addEventListener('dragleave', function(e) {
+                e.preventDefault();
+                this.classList.remove('border-blue-500', 'bg-blue-50');
+            });
+
+            dropZone.addEventListener('drop', function(e) {
+                e.preventDefault();
+                this.classList.remove('border-blue-500', 'bg-blue-50');
+                // TODO: Handle file drop
+                console.log('Files dropped:', e.dataTransfer.files);
+            });
+        }
+
+        // Form validation and state management
+        const githubTokenInput = document.getElementById('github-token');
+        const repoUrlInput = document.getElementById('repo-url');
+        const uploadButton = document.querySelector('[data-event="click:startUpload"]');
+
+        function validateForm() {
+            const tokenValid = githubTokenInput && githubTokenInput.value.length > 0;
+            const repoValid = repoUrlInput && repoUrlInput.value.length > 0;
+            
+            if (uploadButton) {
+                uploadButton.disabled = !(tokenValid && repoValid);
+            }
+        }
+
+        [githubTokenInput, repoUrlInput].forEach(input => {
+            if (input) {
+                input.addEventListener('input', validateForm);
+            }
+        });
+
+        // Initialize form validation
+        validateForm();
+    })();
+    </script>
+</body>
+</html>
