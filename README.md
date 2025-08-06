@@ -1,4 +1,4 @@
-![Typing SVG](https://readme-typing-svg.demolab.com/demo/?font=Audiowide&color=A81D1D&center=true&vCenter=true&multiline=true&random=true&lines=Vous+pouvez+le+modifier.+;Owner%3Ajeff_mitsuki;Ne+me+contactez+pas+si+vous+ne+parlez+pas+du+projet....)
+[![Typing SVG](https://readme-typing-svg.demolab.com?font=Audiowide&pause=1000&color=A81D1D&center=true&vCenter=true&random=true&width=435&lines=Vous+pouvez+le+modifier.+;Owner%3Ajeff_mitsuki;Ne+me+contactez+pas+si+vous+ne+parlez+pas+du+projet....)](https://git.io/typing-svg)
 # GitHub ZIP Uploader | Telechargeur GitHub ZIP
 
 <div align="center">
